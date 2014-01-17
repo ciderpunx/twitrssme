@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>TwitRSS.me - rss of twitter user feeds by screenscraping with perl</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/twitrss.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand nav-link" href="#top">TwitRSS.me</a>
+        </div> <!-- /.navbar-header -->
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#top" class="nav-link">Get Twitter User RSS</a></li>
+            <li><a href="#donate" class="nav-link">Donate</a></li>
+            <!--li><a href="#code" class="nav-link">Get Code</a></li-->
+            <li><a href="#about" class="nav-link">About</a></li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav> <!-- /.navbar -->
+
+    <div id="top" class="jumbotron">
+      <div class="container">
+        <h1>TwitRSS.me</h1>
+        <h2>Get your twitter user feed as RSS</h2>
+				<p>
+				<form action="/twitter_user_to_rss/" method="get">
+					<label for="screen_name">Twitter User:</label><br />
+					@<input name="user" id="screen_name" type="text" class="input" maxlength="140" size="20" value="" placeholder="ciderpunx" /> <br />
+					<label for="replies">With replies?:</label> 
+					<input name="replies" id="replies" type="checkbox" style="margin-left:1.2em" /><br />
+					<label class="hid" for="submit"> &nbsp; </label>
+					<input id="fetch" type="submit" value=" Fetch RSS " class="btn btn-primary btn-lg" />
+				</form>
+				</p>
+      </div> <!-- /.container -->
+    </div> <!-- /.jumbotron -->
+
+    <div class="container">
+      <h3 id="donate" class="subhead">Donate</h3>
+      <div class="row">
+        <div class="col-md-8 col-sm-6 benefit">
+          <!--div class="benefit-ball">
+            <span class="glyphicon glyphicon-home"></span>
+          </div-->
+          <h3>Keep TwitRSS.me free</h3>
+					<p>TwitRSS.me is getting more than a million requests a month at the moment. I have been able to 
+					   offload some of this onto <a href="http://cloudflare.com">cloudflare</a>, but it is quite a heavy site
+						 to host on no money. Any money you can donate will go towards hosting costs and getting a pro cloudflare account.</p>
+        </div> <!-- /.benefit -->
+
+        <div class="col-md-4 col-sm-6 benefit">
+          <!--div class="benefit-ball">
+            <span class="glyphicon glyphicon-cloud"></span>
+          </div-->
+          <h3>Donate TODAY!</h3>
+					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+						<input type="hidden" name="cmd" value="_s-xclick">
+						<input type="hidden" name="hosted_button_id" value="YLP6TQ5RU46VN">
+						<input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
+						<img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+					</form>
+        </div> <!-- /.benefit -->
+      </div> <!-- /.row -->
+    </div> <!-- /.container -->
+
+    <div class="container-alternate">
+      <div class="container">
+        <h3 id="about" class="subhead">About TwitRSS.me</h3>
+        <div class="row about">
+          <div class="col-md-10 col-md-offset-1 text-center">
+            <p>
+						Way back in the mists of time twitter used to have RSS feeds. It was great and people used them. I even made a 
+						<a href="http://charlieharvey.org.uk/page/twitter_rss">twitter RSS getter</a> form for my website so you could locate your feed. 
+						But in June 2013 they killed the RSS feeds. Fuckers. 
+						</p>
+						<p>
+						So, I <a href="http://perlmonks.org/?node_id=1039382">wrote a script</a> that would fetch a twitter search as an RSS feed, which 
+						was a thing I needed to do. Rather than use the api, I just screen scraped the open web for the data. 
+            </p>
+            <p>
+							I realized that the same idea would work for user timelines and so I built a script and modded my twitter
+							rss getter to use that instead. It proved popular (and killed my server a few times). So I put it on its own
+							domain name and write a frontend. This dear reader is that. And if you are still reading, maybe you should stop and <a href="#donate">donate</a>.
+            </p>
+          </div> <!-- /.col-md-10 -->
+        </div> <!-- /.row -->
+      </div> <!-- /.container -->
+    </div> <!-- /.container-alternate -->
+
+    <footer>
+      <div class="container clearfix">
+        <p class="pull-left">
+				&copy; <a href="http://charlieharvey.org.uk">Charlie Harvey</a> 2013. Use it under BY-NC-SA if you want. Code coming soon.
+        </p>
+        <p class="pull-right">Template by <a href="http://coverstrap.com">Coverstrap</a>. Mistakes are all my own.
+        </p>
+      </div> <!-- /.container -->
+    </footer>
+
+		<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    <script>
+      $(".nav-link").click(function(e) {
+        e.preventDefault();
+        var link = $(this);
+        var href = link.attr("href");
+        $("html,body").animate({scrollTop: $(href).offset().top - 80}, 500);
+        link.closest(".navbar").find(".navbar-toggle:not(.collapsed)").click();
+      });
+    </script>
+		<script type="text/javascript">
+			var _paq = _paq || [];
+			_paq.push(["setDocumentTitle", document.domain + "/" + document.title]);
+			_paq.push(["setCookieDomain", "*.twitrss.me"]);
+			_paq.push(["setDomains", ["*.twitrss.me","*.www.twitrss.me"]]);
+			_paq.push(["trackPageView"]);
+			_paq.push(["enableLinkTracking"]);
+
+			(function() {
+				var u=(("https:" == document.location.protocol) ? "https" : "http") + "://piwik.charlieharvey.org.uk/";
+				_paq.push(["setTrackerUrl", u+"piwik.php"]);
+				_paq.push(["setSiteId", "6"]);
+				var d=document, g=d.createElement("script"), s=d.getElementsByTagName("script")[0]; g.type="text/javascript";
+				g.defer=true; g.async=true; g.src=u+"piwik.js"; s.parentNode.insertBefore(g,s);
+			})();
+		</script>
+  </body>
+</html>

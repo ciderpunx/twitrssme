@@ -1,0 +1,156 @@
+html{height:100%}
+body {
+  font-size: 18px;
+	height:100%;
+}
+body, h1, h2, h3, h4, h5, h6 {
+  font-family: freesans,helvetica, arial, sans-serif;
+}
+.btn {
+  border-radius: 3em;
+}
+.container {
+  max-width: 900px;
+	height:105%;
+}
+.container-alternate {
+  background: #f0f0f0;
+	height:90%;
+}
+.navbar {
+  background: #fff;
+  padding: 0.3em 0;
+}
+.navbar .navbar-brand {
+  color: #333;
+  font-family: georgia, serif;
+  font-size:22px;
+}
+.navbar ul.nav li a {
+  color: #111;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 0 1.5em;
+}
+.navbar ul.nav li a:hover {
+  color: #000;
+}
+.navbar ul.nav li button {
+  margin: 0.7em 0 0 1em;
+}
+.jumbotron {
+  background: #f0f0f0;
+  color: #333;
+  padding: 4.5em 0 3.5em;
+  text-align: center;
+  margin-bottom: 0;
+}
+.jumbotron h1 {
+  font-family: georgia, serif;
+  font-size: 2.5em;
+}
+.jumbotron h2 {
+  font-size: 1.2em;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.4em;
+  margin-bottom: 1.4em;
+}
+.jumbotron .btn {
+  font-size: 1.2em;
+  padding: 0.3em 2.5em 0.5em;
+}
+.jumbotron .btn .glyphicon {
+  margin-left: 0.2em;
+  position: relative;
+  top: 3px;
+}
+.subhead {
+  font-size: 2em;
+  text-align: center;
+  margin: 2em 0 0.5em;
+}
+.benefits {
+  margin-bottom: 3em;
+}
+.benefit {
+  margin: 1em 0;
+  text-align: center;
+}
+.benefit p {
+  text-align: left;
+}
+.benefit .benefit-ball {
+  background: #f0f0f0;
+  border-radius: 50%;
+  color: #333;
+  display: inline-block;
+  line-height: 1em;
+  padding: 3em;
+}
+.benefit .benefit-ball .glyphicon {
+  font-size: 3em;
+  position: relative;
+  top: -3px;
+  right: 1px;
+}
+.benefit h3 {
+  font-size: 1.5em;
+}
+#tour {
+  margin: 1em 0 4em;
+}
+#tour .carousel-inner img {
+  height: 500px;
+  width: 100%;
+}
+.faqs {
+  margin-bottom: 3em;
+}
+.faqs p {
+  line-height: 1.5em;
+  margin: 1.2em 0;
+}
+.about p {
+  line-height: 1.5em;
+  margin: 1em 0;
+  text-align:left;
+}
+.about p:last-child {
+  margin-bottom: 4em;
+}
+footer {
+  background: #111;
+  color: #fff;
+	padding-top:1.5em;
+  font-size:0.7em;
+	padding-bottom:1em;
+	position:fixed;
+	bottom:0;left:0;right:0;
+}
+@media screen and (max-width: 768px) {
+  .navbar ul.nav li {
+    text-align: center;
+  }
+  .navbar ul.nav li button {
+    margin: 1em 0;
+  }
+  .jumbotron {
+    font-size: 14px;
+    padding: 6em 0 4em;
+  }
+  .benefit {
+    margin-bottom: 2em;
+  }
+}
+@media screen and (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+  .jumbotron {
+    font-size: 12px;
+  }
+  footer .pull-right {
+    display: none;
+  }
+}
