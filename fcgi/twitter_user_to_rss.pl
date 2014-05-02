@@ -6,11 +6,14 @@ use 5.10.0;
 use Data::Dumper;
 use Readonly;
 use HTML::TreeBuilder::XPath;
+use HTML::Entities;
 use LWP::Simple;
 use CGI::Fast;
+use Encode;
 use POSIX qw(strftime);
 
 binmode STDOUT, 'utf8';
+binmode STDIN, 'utf8';
 
 Readonly my $BASEURL => 'https://twitter.com';
 
@@ -65,7 +68,7 @@ while (my $q = CGI::Fast->new) {
 		;
 		my $header = $tweet->findnodes('./div' . class_contains("stream-item-header"))->[0];
 		my $body   = $tweet->findvalue('./p' . class_contains("tweet-text"));
-		$body = "<![CDATA[$body]]>";
+		$body = "<![CDATA[" . HTML::Entities::encode_numeric($body) . "]]>";
 		my $avatar = $header->findvalue('./a/img' . class_contains("avatar") . "/\@src"); 
 		my $fullname = $header->findvalue('./a/strong' . class_contains("fullname"));
 		my $username = '@' . $header->findvalue('./a/span' . class_contains("username") . '/b');
@@ -92,7 +95,7 @@ while (my $q = CGI::Fast->new) {
 			title => $body,
 			description => $body,
 			timestamp => $timestamp,
-			pubDate => $pub_date
+			pubDate => $pub_date,
 		}
 	}
 	$tree->delete; 
