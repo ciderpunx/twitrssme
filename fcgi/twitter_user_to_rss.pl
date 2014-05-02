@@ -59,47 +59,78 @@ while (my $q = CGI::Fast->new) {
 	my $tree= HTML::TreeBuilder::XPath->new;
 	$tree->parse($content);
 	my $tweets = $tree->findnodes( '//li' . class_contains('js-stream-item') );  
+  if ($tweets) {
+    for my $li (@$tweets) {    
+      my $tweet = $li->findnodes('./div' 
+                                  . class_contains("tweet") 
+                                  . '/div' 
+                                  . class_contains("content") )->[0]
+      ;
+      my $header = $tweet->findnodes('./div' . class_contains("stream-item-header"))->[0];
+      my $body   = $tweet->findvalue('./p' . class_contains("tweet-text"));
+      $body = "<![CDATA[" . HTML::Entities::encode_numeric($body) . "]]>";
+      my $avatar = $header->findvalue('./a/img' . class_contains("avatar") . "/\@src"); 
+      my $fullname = $header->findvalue('./a/strong' . class_contains("fullname"));
+      my $username = '@' . $header->findvalue('./a/span' . class_contains("username") . '/b');
+      my $uri = $BASEURL . $header->findvalue('./small' 
+                                  . class_contains("time") 
+                                  . '/a'
+                                  . class_contains("tweet-timestamp") 
+                                  . '/@href'
+      );  
+      my $timestamp = $header->findvalue('./small' 
+                      . class_contains("time") 
+                      . '/a'
+                      . class_contains("tweet-timestamp") 
+                      . '/span/@data-time'
+      );  
 
-	for my $li (@$tweets) {    
-		my $tweet = $li->findnodes('./div' 
-																. class_contains("tweet") 
-																. '/div' 
-																. class_contains("content") )->[0]
-		;
-		my $header = $tweet->findnodes('./div' . class_contains("stream-item-header"))->[0];
-		my $body   = $tweet->findvalue('./p' . class_contains("tweet-text"));
-		$body = "<![CDATA[" . HTML::Entities::encode_numeric($body) . "]]>";
-		my $avatar = $header->findvalue('./a/img' . class_contains("avatar") . "/\@src"); 
-		my $fullname = $header->findvalue('./a/strong' . class_contains("fullname"));
-		my $username = '@' . $header->findvalue('./a/span' . class_contains("username") . '/b');
-		my $uri = $BASEURL . $header->findvalue('./small' 
-																. class_contains("time") 
-																. '/a'
-																. class_contains("tweet-timestamp") 
-																. '/@href'
-		);  
-		my $timestamp = $header->findvalue('./small' 
-										. class_contains("time") 
-										. '/a'
-										. class_contains("tweet-timestamp") 
-										. '/span/@data-time'
-		);  
+      my $pub_date = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($timestamp));
 
-		my $pub_date = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($timestamp));
-
-		push @items, {
-			username => $username,
-			fullname => $fullname,
-			link => $uri,
-			guid => $uri,
-			title => $body,
-			description => $body,
-			timestamp => $timestamp,
-			pubDate => $pub_date,
-		}
+      push @items, {
+        username => $username,
+        fullname => $fullname,
+        link => $uri,
+        guid => $uri,
+        title => $body,
+        description => $body,
+        timestamp => $timestamp,
+        pubDate => $pub_date,
+      }
+    }
 	}
-	$tree->delete; 
+  else {
+     $tweets = $tree->findnodes( '//div' . class_contains('js-stream-item')); 
+     for my $li (@$tweets) {    
+        my $tweet = $li->findnodes('./div' . class_contains("js-tweet"))->[0];
+        next unless $tweet;
+        my $header = $tweet->findnodes('./div' . class_contains("ProfileTweet-header"))->[0];
+        my $body   = $tweet->findvalue('./p' . class_contains("js-tweet-text"));
+        $body = "<![CDATA[" . HTML::Entities::encode_numeric($body) . "]]>";
+        my $author = $header->findnodes('./div' . class_contains("ProfileTweet-authorDetails"))->[0]; 
+        my $avatar = $author->findvalue('./a/img' . class_contains("ProfileTweet-avatar") . "/\@src"); 
+        my $author_name = $author->findnodes('./a/span' . class_contains("ProfileTweet-originalAuthor"))->[0];
+        my $fullname = $author_name->findvalue('./b' . class_contains("ProfileTweet-fullname"));
+        my $username = $author_name->findvalue('./span' . class_contains("ProfileTweet-screenname"));
+        my $ts = $author->findnodes('./span/a' . class_contains("ProfileTweet-timestamp"))->[0];  
+        my $uri = $BASEURL . $ts->findvalue('/@href');
+        my $timestamp = $ts->findvalue('./span/@data-time');
 
+        my $pub_date = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($timestamp));
+
+        push @items, {
+          username => $username,
+          fullname => $fullname,
+          link => $uri,
+          guid => $uri,
+          title => $body,
+          description => $body,
+          timestamp => $timestamp,
+          pubDate => $pub_date,
+        }
+      }
+  }
+	$tree->delete; 
 
 	# now print as an rss feed, with header
 print<<ENDHEAD
@@ -111,7 +142,7 @@ Cache-control: max-age=$max_age
   <channel>
     <title>Twitter Search / $user </title>
     <link>http://twitter.com/$user</link>
-    <description>Twitter feed for: $user.</description>
+    <description>Twitter feed for: $user. Generated by <a href="http://twitrss.me">TwitRSS.me</a></description>
     <language>en-us</language>
     <ttl>40</ttl>
 ENDHEAD
