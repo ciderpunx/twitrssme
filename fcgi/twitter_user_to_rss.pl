@@ -66,6 +66,7 @@ while (my $q = CGI::Fast->new) {
                                   . '/div' 
                                   . class_contains("content") )->[0]
       ;
+      next unless $tweet;
       my $header = $tweet->findnodes('./div' . class_contains("stream-item-header"))->[0];
       my $body   = $tweet->findvalue('./p' . class_contains("tweet-text"));
       $body = "<![CDATA[" . HTML::Entities::encode_numeric($body) . "]]>";
