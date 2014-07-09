@@ -19,46 +19,57 @@ Readonly my $BASEURL => 'https://twitter.com';
 
 
 while (my $q = CGI::Fast->new) {
+        my @ps = $q->param; 
+        my $bad_param=0;
+        for(@ps) {
+          unless ($_=~/^(fetch|replies|user)$/) {
+            err("Bad parameters. Naughty.",405); 
+            $bad_param++;
+            last;
+          }
+        } 
+        next if $bad_param;
+
 	my $user = $q->param('user') || 'ciderpunx';
 
 	$user = lc $user;
 	# die if $user eq 'KaleTicaret1979' || $user eq 'pastasanati' || $user eq 'weightloss';
-	die if $user =~ '^#';
-
+        if($user =~ '^#') {
+		err("That was an hashtag, TwitRSS.me only supports users!",405); 
+                next;
+	}
 	$user=~s/(@|\s)//g;
 	$user=~s/%40//g;
 
 	my $max_age=1800;
 
-	open my $in, '<', 'heavy_users' or die 'No heavy_users file';
-	my @heavy_users = <$in>;
-	close $in;
+        # Don't bother with this, everything is cached on CF anyway
+	#open my $in, '<', 'heavy_users' or die 'No heavy_users file';
+	#my @heavy_users = <$in>;
+	#close $in;
 
-	$max_age = '86400' if grep {/$user/} @heavy_users; 
+	#$max_age = '86400' if grep {/$user/} @heavy_users; 
 
 	my $replies = $q->param('replies') || 0;
 
 	my $url = "$BASEURL/$user";
 	$url .= "/with_replies" if $replies;
 
-
-
-	open my $out, '>>', 'twitter_rss_uses' or die 'No twitter rss uses file';
-	print $out (localtime time) . " $user\n";
-	close $out;
+        # Commented out to save some cycles
+	#open my $out, '>>', 'twitter_rss_uses' or die 'No twitter rss uses file';
+	#print $out (localtime time) . " $user\n";
+	#close $out;
 
 	my $content = get("$BASEURL/$user");
 	unless (defined $content) {
-		err('Can&#8217;t screenscrape Twitter');
+		err('Can&#8217;t screenscrape Twitter',500);
 		next;
 	}
-
 
 	my @items;
 
 	my $tree= HTML::TreeBuilder::XPath->new;
 	$tree->parse($content);
-  #my $tweets = $tree->findnodes( '//li' . class_contains('js-stream-item') );  # old profile page layout, no longer used AFAICT
   my $tweets = $tree->findnodes( '//div' . class_contains('js-stream-item')); # new version 2014ish
   if ($tweets) {
     for my $li (@$tweets) {    
@@ -110,9 +121,11 @@ while (my $q = CGI::Fast->new) {
     }
 	}
   else {
-    die; ## from supporting intermediat version pre may 2014, now shouldn't get hit 
+    $tree->delete; 
+    err("Can't gather tweets for that user",403);
+    next;
   }
-	$tree->delete; 
+  $tree->delete; 
 
 	# now print as an rss feed, with header
 print<<ENDHEAD
@@ -158,9 +171,10 @@ sub class_contains {
 }
 
 sub err {
-	my $msg = shift;
+	my ($msg,$status) = (shift,shift);
 	print<<ENDHEAD
 Content-type: text/html
+Status: $status
 Cache-control: max-age=86400
 Refresh: 5; url=http://twitrss.me
 
