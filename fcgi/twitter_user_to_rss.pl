@@ -8,6 +8,8 @@ use Readonly;
 use HTML::TreeBuilder::XPath;
 use HTML::Entities;
 use LWP::Simple;
+use LWP::ConnCache; 
+use LWP::UserAgent;
 use CGI::Fast;
 use Encode;
 use POSIX qw(strftime);
@@ -16,9 +18,14 @@ binmode STDOUT, 'utf8';
 binmode STDIN, 'utf8';
 
 Readonly my $BASEURL => 'https://twitter.com';
+my $browser = LWP::UserAgent->new;
+$browser->conn_cache(LWP::ConnCache->new());
+$browser->timeout(2);
 
 
 while (my $q = CGI::Fast->new) {
+#    err("Over capacity.  Try running your own instance - code on github.",404);
+#    next;
         my @ps = $q->param; 
         my $bad_param=0;
         for(@ps) {
@@ -33,9 +40,8 @@ while (my $q = CGI::Fast->new) {
 	my $user = $q->param('user') || 'ciderpunx';
 
 	$user = lc $user;
-	# die if $user eq 'KaleTicaret1979' || $user eq 'pastasanati' || $user eq 'weightloss';
         if($user =~ '^#') {
-		err("That was an hashtag, TwitRSS.me only supports users!",405); 
+		err("That was an hashtag, TwitRSS.me only supports users!",404); 
                 next;
 	}
 	$user=~s/(@|\s)//g;
@@ -43,28 +49,17 @@ while (my $q = CGI::Fast->new) {
 
 	my $max_age=1800;
 
-        # Don't bother with this, everything is cached on CF anyway
-	#open my $in, '<', 'heavy_users' or die 'No heavy_users file';
-	#my @heavy_users = <$in>;
-	#close $in;
-
-	#$max_age = '86400' if grep {/$user/} @heavy_users; 
-
 	my $replies = $q->param('replies') || 0;
 
 	my $url = "$BASEURL/$user";
 	$url .= "/with_replies" if $replies;
 
-        # Commented out to save some cycles
-	#open my $out, '>>', 'twitter_rss_uses' or die 'No twitter rss uses file';
-	#print $out (localtime time) . " $user\n";
-	#close $out;
-
-	my $content = get("$BASEURL/$user");
-	unless (defined $content) {
-		err('Can&#8217;t screenscrape Twitter',500);
+	my $response = $browser->get("$BASEURL/$user");
+	unless ($response->is_success) {
+		err('Can&#8217;t screenscrape Twitter',404);
 		next;
 	}
+	my $content = $response->content;
 
 	my @items;
 
@@ -122,7 +117,7 @@ while (my $q = CGI::Fast->new) {
 	}
   else {
     $tree->delete; 
-    err("Can't gather tweets for that user",403);
+    err("Can't gather tweets for that user",404);
     next;
   }
   $tree->delete; 
@@ -176,9 +171,8 @@ sub err {
 Content-type: text/html
 Status: $status
 Cache-control: max-age=86400
-Refresh: 5; url=http://twitrss.me
+Refresh: 10; url=http://twitrss.me
 
 <html><head></head><body><h2>ERR: $msg</h2><p>Redirecting you back to <a href="http://twitrss.me">TwitRSS.me</a> in a few seconds. You might have spelled the username wrong or something</p></body></html>
 ENDHEAD
 ;
-}
