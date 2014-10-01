@@ -6,10 +6,11 @@ use 5.10.0;
 use Data::Dumper;
 use Readonly;
 use HTML::TreeBuilder::XPath;
+use HTML::TreeBuilder::LibXML;
 use HTML::Entities;
-use LWP::Simple;
 use LWP::ConnCache; 
 use LWP::UserAgent;
+use LWP::Protocol::Net::Curl; #net thing to try for performance
 use CGI::Fast;
 use Encode;
 use POSIX qw(strftime);
@@ -17,9 +18,11 @@ use POSIX qw(strftime);
 binmode STDOUT, 'utf8';
 binmode STDIN, 'utf8';
 
+HTML::TreeBuilder::LibXML->replace_original();
+
 Readonly my $BASEURL => 'https://twitter.com';
 my $browser = LWP::UserAgent->new;
-$browser->conn_cache(LWP::ConnCache->new());
+$browser->conn_cache(LWP::ConnCache->new(5));
 $browser->timeout(2);
 
 
@@ -176,3 +179,4 @@ Refresh: 10; url=http://twitrss.me
 <html><head></head><body><h2>ERR: $msg</h2><p>Redirecting you back to <a href="http://twitrss.me">TwitRSS.me</a> in a few seconds. You might have spelled the username wrong or something</p></body></html>
 ENDHEAD
 ;
+}
