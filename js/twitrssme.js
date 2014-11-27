@@ -42,7 +42,7 @@ function tweetsFor(user,jQueryElem,fn,asHTML,handler) {
   });
 }
 function showFeed(jQueryElem) {
-    rss = encodeURIComponent($('#rss-result').text());
+    rss = encodeURIComponent(jQueryElem.text());
     window.location.assign('data:text/xml,'+rss);
 }
 function makeHTML(user,tweets) {
