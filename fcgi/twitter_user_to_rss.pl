@@ -84,8 +84,11 @@ while (my $q = CGI::Fast->new) {
                                      . class_contains("ProfileTweet-contents") 
                                      . '/p' 
                                      . class_contains("js-tweet-text"));
-      $body = "<![CDATA[" . HTML::Entities::encode_numeric($body) . "]]>";
+      $body = HTML::Entities::encode_numeric($body);
       my $avatar = $header->findvalue('./a/img' . class_contains("ProfileTweet-avatar") . "/\@src"); 
+      my $mediadivs = $tweet->findnodes('.//div' . class_contains('js-media-container'));
+      my @tweetimage = map {$_->findvalues(".//img/\@src")} @$mediadivs;
+      @tweetimage = flat @tweetimage;
       my $fullname = $header->findvalue('./a/span/b' . class_contains("ProfileTweet-fullname"));
       my $username = $header->findvalue('./a/span/span' . class_contains("ProfileTweet-screenname"));
       $username =~ s{<[^>]+>}{}g;
@@ -93,6 +96,24 @@ while (my $q = CGI::Fast->new) {
       $username =~ s{\s+$}{};
       my $title = $body;
       $title =~ s{A\[}{A\[$username: }; # yuk, prepend username to title
+      if ($username !~ /\@$user/i) {
+          $body =~ s{A\[}{A\[$username: };
+      }
+      # Make links like https://kiza.eu/software/snownews/snowscripts/extensions/script/twitterlinks/source/
+      $body =~ s{(https?://[^>"<  ]+)(?=&#xA0;)}{<a href="$1">$1</a>}g;
+      $body =~ s{(?<!")(https?://[^>"<  ]+)}{<a href="$1">$1</a>}g;
+      $body =~ s{@([a-zA-Z0-9_]*)}{<a href="https://twitter.com/$1">\@$1</a>}g;
+      $body =~ s{( |^)#([a-zA-Z0-9_&#;]+)}{$1<a href="https://twitter.com/hashtag/$2">#$2</a>}g;
+
+      if (@tweetimage) {
+          foreach(@tweetimage) {
+              $body = $body . "<br /><img src=\"$_\" />";
+          }
+      }
+
+      $title = "<![CDATA[" . $title . "]]>";
+      $body = "<![CDATA[" . $body . "]]>";
+
       my $uri = $BASEURL . $header->findvalue('./span' 
                                   . '/a'
                                   . class_contains("ProfileTweet-timestamp") 
