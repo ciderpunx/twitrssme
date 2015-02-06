@@ -145,6 +145,7 @@ for (@items) {
   print<<ENDITEM
     <item>
       <title>$_->{title}</title>
+      <dc:creator><![CDATA[$_->{fullname} ($_->{username})]]></dc:creator>
       <description>$_->{description}</description>
       <pubDate>$_->{pubDate}</pubDate>
       <guid>$_->{guid}</guid>
