@@ -8,6 +8,7 @@ use Readonly;
 use HTML::TreeBuilder::XPath;
 use HTML::TreeBuilder::LibXML;
 use HTML::Entities;
+use List::Flatten;
 use LWP::ConnCache; 
 use LWP::UserAgent;
 use LWP::Protocol::Net::Curl; #net thing to try for performance
