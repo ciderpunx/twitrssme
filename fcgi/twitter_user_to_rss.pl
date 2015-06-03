@@ -33,7 +33,7 @@ while (my $q = CGI::Fast->new) {
         my $bad_param=0;
         for(@ps) {
           unless ($_=~/^(fetch|replies|user)$/) {
-            err("Bad parameters. Naughty.",405); 
+            err("Bad parameters. Naughty.",404); 
             $bad_param++;
             last;
           }
@@ -53,6 +53,11 @@ while (my $q = CGI::Fast->new) {
 	my $max_age=1800;
 
 	my $replies = $q->param('replies') || 0;
+	if ($replies && lc($replies) ne 'on') {
+          err("Bad parameters. Naughty.",404); 
+          $bad_param++;
+          next;
+	}
 
 	my $url = "$BASEURL/$user";
 	$url .= "/with_replies" if $replies;
@@ -68,40 +73,38 @@ while (my $q = CGI::Fast->new) {
 
 	my $tree= HTML::TreeBuilder::XPath->new;
 	$tree->parse($content);
-  my $tweets = $tree->findnodes( '//div' . class_contains('js-stream-item')); # new version 2014ish
+  my $tweets = $tree->findnodes( '//li' . class_contains('js-stream-item')); # new version 2015-06-02
   if ($tweets) {
     for my $li (@$tweets) {    
       my $tweet = $li->findnodes('./div' 
-                                  . class_contains("js-tweet") 
+                                  . class_contains("js-stream-tweet") 
                                 )->[0]
       ;
       next unless $tweet;
-      my $header = $tweet->findnodes('./div' 
-                                     . class_contains("ProfileTweet-header") 
-                                     . "/div" 
-                                     . class_contains("ProfileTweet-authorDetails"))->[0];
-      my $body   = $tweet->findvalue('./div' 
-                                     . class_contains("ProfileTweet-contents") 
-                                     . '/p' 
-                                     . class_contains("js-tweet-text"));
-      $body = "<![CDATA[" . HTML::Entities::encode_numeric($body) . "]]>";
-      my $avatar = $header->findvalue('./a/img' . class_contains("ProfileTweet-avatar") . "/\@src"); 
-      my $fullname = $header->findvalue('./a/span/b' . class_contains("ProfileTweet-fullname"));
-      my $username = $header->findvalue('./a/span/span' . class_contains("ProfileTweet-screenname"));
+      my $header = $tweet->findnodes('./div/div' 
+                                     . class_contains("stream-item-header") 
+                                     . "/a" 
+                                     . class_contains("js-action-profile"))->[0];
+      my $bd   = $tweet->findnodes( './div/p' 
+                                     . class_contains("js-tweet-text")
+                                     . "")->[0];
+      my $body = "<![CDATA[" . encode_entities($bd->as_HTML,'^\n\x20-\x25\x27-\x7e"') . "]]>";
+      $body=~s{&amp;(\w+);}{&$1;}gi;
+      $body=~s{target="_blank"}{}gi;
+      my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
+      my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
+      my $username = $header->findvalue('./span' . class_contains("username"));
       $username =~ s{<[^>]+>}{}g;
       $username =~ s{^\s+}{};
       $username =~ s{\s+$}{};
-      my $title = $body;
-      $title =~ s{A\[}{A\[$username: }; # yuk, prepend username to title
-      my $uri = $BASEURL . $header->findvalue('./span' 
-                                  . '/a'
-                                  . class_contains("ProfileTweet-timestamp") 
-                                  . '/@href'
-      );  
-      my $timestamp = $header->findvalue('./span' 
-                      . '/a'
-                      . class_contains("ProfileTweet-timestamp") 
-                      . '/span/@data-time'
+      my $title = "<![CDATA[$username: " . encode_entities(decode_entities($bd->as_text), '^\n\x20-\x25\x27-\x7e') ."]]>";
+      #$title =~ s{A\[}{A\[$username: }; # yuk, prepend username to title
+      $title=~s{&nbsp;}{}gi;
+      my $uri = $BASEURL . $tweet->findvalue('@data-permalink-path');  
+      my $timestamp = $tweet->findnodes('./div/div'
+                      . class_contains("stream-item-header")
+                      . '/small/a' 
+                      . class_contains("tweet-timestamp"))->[0]->findvalue('./span/@data-time'
       );  
 
       my $pub_date = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($timestamp));
