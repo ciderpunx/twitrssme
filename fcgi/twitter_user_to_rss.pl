@@ -91,6 +91,7 @@ while (my $q = CGI::Fast->new) {
       my $body = "<![CDATA[" . encode_entities($bd->as_HTML,'^\n\x20-\x25\x27-\x7e"') . "]]>";
       $body=~s{&amp;(\w+);}{&$1;}gi;
       $body=~s{target="_blank"}{}gi;
+      $body=~s{href="/}{href="https://twitter.com/}gi; # add back in twitter.com to unbreak links to hashtags, users, etc.
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
       my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
       my $username = $header->findvalue('./span' . class_contains("username"));
