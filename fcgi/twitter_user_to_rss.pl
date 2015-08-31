@@ -41,39 +41,39 @@ while (my $q = CGI::Fast->new) {
         } 
         next if $bad_param;
 
-	my $user = $q->param('user') || 'ciderpunx';
+  my $user = $q->param('user') || 'ciderpunx';
 
-	$user = lc $user;
+  $user = lc $user;
         if($user =~ '^#') {
-		err("That was an hashtag, TwitRSS.me only supports users!",404); 
+    err("That was an hashtag, TwitRSS.me only supports users!",404); 
                 next;
-	}
-	$user=~s/(@|\s)//g;
-	$user=~s/%40//g;
+  }
+  $user=~s/(@|\s)//g;
+  $user=~s/%40//g;
 
-	my $max_age=1800;
+  my $max_age=1800;
 
-	my $replies = $q->param('replies') || 0;
-	if ($replies && lc($replies) ne 'on') {
+  my $replies = $q->param('replies') || 0;
+  if ($replies && lc($replies) ne 'on') {
           err("Bad parameters. Naughty.",404); 
           $bad_param++;
           next;
-	}
+  }
 
-	my $url = "$BASEURL/$user";
-	$url .= "/with_replies" if $replies;
+  my $url = "$BASEURL/$user";
+  $url .= "/with_replies" if $replies;
 
-	my $response = $browser->get($url);
-	unless ($response->is_success) {
-		err('Can&#8217;t screenscrape Twitter',404);
-		next;
-	}
-	my $content = $response->content;
+  my $response = $browser->get($url);
+  unless ($response->is_success) {
+    err('Can&#8217;t screenscrape Twitter',404);
+    next;
+  }
+  my $content = $response->content;
 
-	my @items;
+  my @items;
 
-	my $tree= HTML::TreeBuilder::XPath->new;
-	$tree->parse($content);
+  my $tree= HTML::TreeBuilder::XPath->new;
+  $tree->parse($content);
   my $tweets = $tree->findnodes( '//li' . class_contains('js-stream-item')); # new version 2015-06-02
   if ($tweets) {
     for my $li (@$tweets) {    
@@ -93,8 +93,19 @@ while (my $q = CGI::Fast->new) {
       $body=~s{&amp;(\w+);}{&$1;}gi;
       $body=~s{target="_blank"}{}gi;
       $body=~s{href="/}{href="https://twitter.com/}gi; # add back in twitter.com to unbreak links to hashtags, users, etc.
+      $body=~s{<a href=".*title="([^"]+)">}{<a href="$1">}gi; # experimental! stop links going via t.co; if an a has a title use it as the href.
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
+      my $fst_img_a = $tweet->findnodes( './div/div' 
+                                     . class_contains("js-media-container")
+                                     . "/div/a")->[0];
+      my $fst_img="";
+      if($fst_img_a) {
+        $fst_img = $fst_img_a->findvalue('@data-url');
+        if($fst_img) {
+          $body=~s{\]\]>$}{"<img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
+        }
+      }
       my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
       my $username = $header->findvalue('./span' . class_contains("username"));
       $username =~ s{<[^>]+>}{}g;
@@ -122,7 +133,7 @@ while (my $q = CGI::Fast->new) {
         pubDate => $pub_date,
       }
     }
-	}
+  }
   else {
     $tree->delete; 
     err("Can't gather tweets for that user",404);
@@ -130,7 +141,7 @@ while (my $q = CGI::Fast->new) {
   }
   $tree->delete; 
 
-	# now print as an rss feed, with header
+  # now print as an rss feed, with header
 print<<ENDHEAD
 Content-type: application/rss+xml
 Cache-control: max-age=$max_age
@@ -180,8 +191,8 @@ sub class_contains {
 }
 
 sub err {
-	my ($msg,$status) = (shift,shift);
-	print<<ENDHEAD
+  my ($msg,$status) = (shift,shift);
+  print<<ENDHEAD
 Content-type: text/html
 Status: $status
 Cache-control: max-age=86400
