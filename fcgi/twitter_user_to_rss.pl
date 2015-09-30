@@ -10,7 +10,7 @@ use HTML::TreeBuilder::LibXML;
 use HTML::Entities qw(:DEFAULT encode_entities_numeric);
 use LWP::ConnCache; 
 use LWP::UserAgent;
-use LWP::Protocol::Net::Curl; #net thing to try for performance
+use LWP::Protocol::Net::Curl;
 use CGI::Fast;
 use Encode;
 use POSIX qw(strftime);
@@ -51,7 +51,7 @@ while (my $q = CGI::Fast->new) {
   $user=~s/(@|\s)//g;
   $user=~s/%40//g;
 
-  my $max_age=1800;
+  my $max_age=43200;
 
   my $replies = $q->param('replies') || 0;
   if ($replies && lc($replies) ne 'on') {
@@ -144,7 +144,7 @@ while (my $q = CGI::Fast->new) {
   # now print as an rss feed, with header
 print<<ENDHEAD
 Content-type: application/rss+xml
-Cache-control: max-age=$max_age
+Cache-control: public, max-age=$max_age
 
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss" xmlns:twitter="http://api.twitter.com" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
