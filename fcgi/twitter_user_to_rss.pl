@@ -28,8 +28,6 @@ $browser->timeout(2);
 
 
 while (my $q = CGI::Fast->new) {
-#    err("Over capacity.  Try running your own instance - code on github.",404);
-#    next;
         my @ps = $q->param; 
         my $bad_param=0;
         for(@ps) {
@@ -51,7 +49,7 @@ while (my $q = CGI::Fast->new) {
   $user=~s/(@|\s)//g;
   $user=~s/%40//g;
 
-  my $max_age=43200;
+  my $max_age=21600;
 
   my $replies = $q->param('replies') || 0;
   if ($replies && lc($replies) ne 'on') {
