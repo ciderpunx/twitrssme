@@ -49,7 +49,7 @@ while (my $q = CGI::Fast->new) {
   $user=~s/(@|\s)//g;
   $user=~s/%40//g;
 
-  my $max_age=21600;
+  my $max_age=3600;
 
   my $replies = $q->param('replies') || 0;
   if ($replies && lc($replies) ne 'on') {
