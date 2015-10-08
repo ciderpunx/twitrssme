@@ -26,7 +26,7 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#top" class="nav-link">Get Twitter User RSS</a></li>
-            <li><a href="#donate" class="nav-link">Donate</a></li>
+            <li><a href="#donate" class="nav-link">Sponsors</a></li>
             <!--li><a href="#code" class="nav-link">Get Code</a></li-->
             <li><a href="#about" class="nav-link">About</a></li>
           </ul>
@@ -53,29 +53,24 @@
     </div> <!-- /.jumbotron -->
 
     <div class="container">
-      <h3 id="donate" class="subhead">Donate</h3>
+      <h3 id="sponsors" class="subhead">Sponsors</h3>
       <div class="row">
         <div class="col-md-8 col-sm-6 benefit">
           <!--div class="benefit-ball">
             <span class="glyphicon glyphicon-home"></span>
           </div-->
-          <h3>Keep TwitRSS.me free</h3>
-          <p>TwitRSS.me is getting more than <s>a</s> 6 million requests a <s>month</s> day at the moment. I have been able to 
-             offload some of this onto <a href="http://cloudflare.com">cloudflare</a>, but it is quite a heavy site
-             to host on no money. Any money you can donate will go towards hosting costs and getting a pro cloudflare account.</p>
+          <h3>TwitRSS.me is free. Thanks Bytemark!</h3>
+          <p>In September 2015, Bytemark generously offered to host TwitRSS.me for free on their <a href="http://www.bigv.io/?utm_source=twitrssme">Big V</a> platform. That means that I have been able to drop the cache time, so that feeds update more often and provide a generally more reliable service. </p>
+          <h3>Traffic stats</h3>
+          <p>
+          <!--#include virtual="/include/varnishstat"--> 
+          </p>
         </div> <!-- /.benefit -->
 
         <div class="col-md-4 col-sm-6 benefit">
-          <!--div class="benefit-ball">
-            <span class="glyphicon glyphicon-cloud"></span>
-          </div-->
-          <h3>Donate TODAY!</h3>
-          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-            <input type="hidden" name="cmd" value="_s-xclick">
-            <input type="hidden" name="hosted_button_id" value="YLP6TQ5RU46VN">
-            <input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
-            <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
-          </form>
+          <a href="http://www.bigv.io/?utm_source=twitrssme">
+            <div style="background-image:url(/img/bigv.svg);height:200px;width:320px;margin-top:2.2em"> </div> 
+	  </a>
         </div> <!-- /.benefit -->
       </div> <!-- /.row -->
     </div> <!-- /.container -->
@@ -97,7 +92,7 @@
             <p>
               I realized that the same idea would work for user timelines and so I built a script and modded my twitter
               rss getter to use that instead. It proved popular (and killed my server a few times). So I put it on its own
-              domain name and wrote a frontend. This dear reader is that. And if you are still reading, maybe you should stop and <a href="#donate">donate</a>.
+              domain name and wrote a frontend. This dear reader is that. And if you are still reading, maybe you should stop.
             </p>
           </div> <!-- /.col-md-10 -->
         </div> <!-- /.row -->
