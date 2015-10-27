@@ -95,11 +95,11 @@ while (my $q = CGI::Fast->new) {
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
       my $fst_img_a = $tweet->findnodes( './div/div' 
-                                     . class_contains("js-media-container")
-                                     . "/div/a")->[0];
+                                     . class_contains("OldMedia")
+                                     . "/div/div/div")->[0];
       my $fst_img="";
       if($fst_img_a) {
-        $fst_img = $fst_img_a->findvalue('@data-url');
+        $fst_img = $fst_img_a->findvalue('@data-image-url');
         if($fst_img) {
           $body=~s{\]\]>$}{"<img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
         }
