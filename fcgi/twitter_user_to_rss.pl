@@ -86,17 +86,23 @@ while (my $q = CGI::Fast->new) {
                                      . class_contains("js-action-profile"))->[0];
       my $bd   = $tweet->findnodes( './div/p' 
                                      . class_contains("js-tweet-text")
-                                     . "")->[0];
+                                     )->[0];
       my $body = "<![CDATA[" . encode_entities($bd->as_HTML,'^\n\x20-\x25\x27-\x7e"') . "]]>";
       $body=~s{&amp;(\w+);}{&$1;}gi;
-      $body=~s{target="_blank"}{}gi;
       $body=~s{href="/}{href="https://twitter.com/}gi; # add back in twitter.com to unbreak links to hashtags, users, etc.
-      $body=~s{<a href=".*title="([^"]+)">}{<a href="$1">}gi; # experimental! stop links going via t.co; if an a has a title use it as the href.
+      $body=~s{<a[^>]+href="https://t.co[^"]+"[^>]+title="([^"]+)"[^>]*>}{<a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
+      $body=~s{<a[^>]+title="([^"]+)"[^>]+href="https://t.co[^"]+"[^>]*>}{<a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
+      $body=~s{target="_blank"}{}gi;
+      $body=~s{</?span[^>]*>}{}gi;
+      $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
       my $fst_img_a = $tweet->findnodes( './div/div' 
-                                     . class_contains("OldMedia")
-                                     . "/div/div/div")->[0];
+                                       . class_contains("AdaptiveMedia")
+                                       . "/div/div/div")->[0];
+      $fst_img_a = $tweet->findnodes( './div/div' 
+                                    . class_contains("OldMedia")
+                                    . "/div/div/div")->[0] unless $fst_img_a;
       my $fst_img="";
       if($fst_img_a) {
         $fst_img = $fst_img_a->findvalue('@data-image-url');
