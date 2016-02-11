@@ -84,7 +84,7 @@ while (my $q = CGI::Fast->new) {
                                      . class_contains("stream-item-header") 
                                      . "/a" 
                                      . class_contains("js-action-profile"))->[0];
-      my $bd   = $tweet->findnodes( './div/p' 
+      my $bd   = $tweet->findnodes( './div/div/p' 
                                      . class_contains("js-tweet-text")
                                      )->[0];
       my $body = "<![CDATA[" . encode_entities($bd->as_HTML,'^\n\x20-\x25\x27-\x7e"') . "]]>";
