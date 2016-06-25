@@ -90,8 +90,8 @@ while (my $q = CGI::Fast->new) {
       my $body = "<![CDATA[" . encode_entities($bd->as_HTML,'^\n\x20-\x25\x27-\x7e"') . "]]>";
       $body=~s{&amp;(\w+);}{&$1;}gi;
       $body=~s{href="/}{href="https://twitter.com/}gi; # add back in twitter.com to unbreak links to hashtags, users, etc.
-      $body=~s{<a[^>]+href="https://t.co[^"]+"[^>]+title="([^"]+)"[^>]*>}{<a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
-      $body=~s{<a[^>]+title="([^"]+)"[^>]+href="https://t.co[^"]+"[^>]*>}{<a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
+      $body=~s{<a[^>]+href="https://t.co[^"]+"[^>]+title="([^"]+)"[^>]*>}{ <a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
+      $body=~s{<a[^>]+title="([^"]+)"[^>]+href="https://t.co[^"]+"[^>]*>}{ <a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
       $body=~s{target="_blank"}{}gi;
       $body=~s{</?span[^>]*>}{}gi;
       $body=~s{</?s[^>]*>}{}gi;
@@ -117,6 +117,7 @@ while (my $q = CGI::Fast->new) {
       $username =~ s{\s+$}{};
       my $title = enctxt($bd->as_text);
       $title=~s{&nbsp;}{}gi;
+      $title=~s{http}{ http}; # links in title lose space
       my $uri = $BASEURL . $tweet->findvalue('@data-permalink-path');  
       my $timestamp = $tweet->findnodes('./div/div'
                       . class_contains("stream-item-header")
