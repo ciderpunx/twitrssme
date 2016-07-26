@@ -150,6 +150,7 @@ while (my $q = CGI::Fast->new) {
 print<<ENDHEAD
 Content-type: application/rss+xml
 Cache-control: public, max-age=$max_age
+Access-Control-Allow-Origin: *
 
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:georss="http://www.georss.org/georss" xmlns:twitter="http://api.twitter.com" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
