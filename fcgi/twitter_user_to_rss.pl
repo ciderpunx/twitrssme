@@ -26,7 +26,6 @@ my $browser = LWP::UserAgent->new;
 $browser->conn_cache(LWP::ConnCache->new(5));
 $browser->timeout(2);
 
-
 while (my $q = CGI::Fast->new) {
         my @ps = $q->param; 
         my $bad_param=0;
@@ -42,11 +41,11 @@ while (my $q = CGI::Fast->new) {
   my $user = $q->param('user') || 'ciderpunx';
 
   $user = lc $user;
-        if($user =~ '^#') {
+  if($user =~ '^#') {
     err("That was an hashtag, TwitRSS.me only supports users!",404); 
-                next;
+    next;
   }
-  $user=~s/(@|\s)//g;
+  $user=~s/(@|\s|\?)//g;
   $user=~s/%40//g;
 
   my $max_age=3600;
