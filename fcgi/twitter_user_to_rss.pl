@@ -88,11 +88,11 @@ while (my $q = CGI::Fast->new) {
                                      )->[0];
       my $body = "<![CDATA[" . encode_entities($bd->as_HTML,'^\n\x20-\x25\x27-\x7e"') . "]]>";
       $body=~s{&amp;(\w+);}{&$1;}gi;
+      $body=~s{<a}{ <a}gi; # always spaces before a tags
       $body=~s{href="/}{href="https://twitter.com/}gi; # add back in twitter.com to unbreak links to hashtags, users, etc.
       $body=~s{<a[^>]+href="https://t.co[^"]+"[^>]+title="([^"]+)"[^>]*>}{ <a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
       $body=~s{<a[^>]+title="([^"]+)"[^>]+href="https://t.co[^"]+"[^>]*>}{ <a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
       $body=~s{target="_blank"}{}gi;
-      $body=~s{</?span[^>]*>}{}gi;
       $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
@@ -106,7 +106,7 @@ while (my $q = CGI::Fast->new) {
       if($fst_img_a) {
         $fst_img = $fst_img_a->findvalue('@data-image-url');
         if($fst_img) {
-          $body=~s{\]\]>$}{"<img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
+          $body=~s{\]\]>$}{" <img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
         }
       }
       my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
