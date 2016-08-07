@@ -25,7 +25,7 @@
 
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#top" class="nav-link">Get Twitter User RSS</a></li>
+            <li><a href="#top" class="nav-link">Get Twitter RSS</a></li>
             <li><a href="#sponsors" class="nav-link">Sponsors</a></li>
             <!--li><a href="#code" class="nav-link">Get Code</a></li-->
             <li><a href="#about" class="nav-link">About</a></li>
@@ -38,7 +38,7 @@
     <div id="top" class="jumbotron">
       <div class="container">
         <h1>TwitRSS.me</h1>
-        <h2>Get your twitter user feed as RSS</h2>
+        <h2>Get Twitter user or search feed as RSS</h2>
         <p>
         <form action="/twitter_user_to_rss/" method="get">
           <label for="screen_name">Twitter User:</label><br />
@@ -47,6 +47,16 @@
           <input name="replies" id="replies" type="checkbox" style="margin-left:1.2em" /><br />
           <label class="hid" for="submit"> &nbsp; </label>
           <input id="fetch" type="submit" value=" Fetch RSS " class="btn btn-primary btn-lg" />
+        </form>
+        </p>
+	<h3 style="padding-top:1em; font-size:1.66em">New: Get a Twitter search as a feed</h3>
+	<p>
+	<em>This uses the results from the "live" search tab</em>
+        <form action="/twitter_search_to_rss/" method="get">
+          <label for="search_term">Twitter Search:</label><br />
+          <input name="term" id="search_term" type="text" class="input" maxlength="140" size="20" value="" placeholder="Your search term" /> <br />
+          <label class="hid" for="submit"> &nbsp; </label><br />
+          <input id="fetch" type="submit" value=" Fetch Search RSS " class="btn btn-primary btn-lg" />
         </form>
         </p>
       </div> <!-- /.container -->
