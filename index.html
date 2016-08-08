@@ -38,7 +38,7 @@
     <div id="top" class="jumbotron">
       <div class="container">
         <h1>TwitRSS.me</h1>
-        <h2>Get Twitter user or search feed as RSS</h2>
+        <h2>Get your twitter user feed as RSS</h2>
         <p>
         <form action="/twitter_user_to_rss/" method="get">
           <label for="screen_name">Twitter User:</label><br />
@@ -49,9 +49,9 @@
           <input id="fetch" type="submit" value=" Fetch RSS " class="btn btn-primary btn-lg" />
         </form>
         </p>
-	<h3 style="padding-top:1em; font-size:1.66em">New: Get a Twitter search as a feed</h3>
-	<p>
-	<em>This uses the results from the "live" search tab</em>
+        <h2 style="padding-top:2em"><span style="font-weight:900;font-style:normal;font-size:1.8em">OR</span><br /> <br />
+	        <em>Get a twitter "live" search as RSS</em>
+        </h2>
         <form action="/twitter_search_to_rss/" method="get">
           <label for="search_term">Twitter Search:</label><br />
           <input name="term" id="search_term" type="text" class="input" maxlength="140" size="20" value="" placeholder="Your search term" /> <br />
