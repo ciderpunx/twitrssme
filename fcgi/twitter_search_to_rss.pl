@@ -29,7 +29,7 @@ while (my $q = CGI::Fast->new) {
     err("That was a user, you called the wrong script. Call me for searches.",404); 
     next;
   }
-  $term=~s/(@|\s|\?)//g;
+  $term=~s/(@|\?)//g;
 
   my $content     = fetch_search_feed($term);
   my @items       = items_from_feed($content);
