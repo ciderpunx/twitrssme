@@ -42,7 +42,7 @@ I use cpanminus to manage Perl dependencies but you may want to use apt, though 
      sudo aptitude install cpanm libcurl3-dev
      sudo cpanm CGI::Fast Data::Dumper Encode Net::Curl HTML::Entities HTML::TreeBuilder::LibXML HTML::TreeBuilder::XPath LWP::ConnCache LWP::Protocol::Net::Curl LWP::UserAgent POSIX Readonly
 
-Once all is installed you should be able to go in to /var/www/twitrssme/fcgi and run the Perl script thus:
+Once all is installed you should be able to go in to /var/www/twitrssme/fcgi and run the Perl script thus.
 
     cd /var/www/twitrssme/fcgi
     perl twitter_user_to_rss.pl
@@ -56,7 +56,7 @@ Now we need to set up Apache to serve TwitRSS. In this tutorial we set up the de
 
     vi /etc/apache2/sites-enabled/000-default
 
-Here is a basic config
+Here is a basic config.
 
     <VirtualHost *:80>
       DocumentRoot /var/www/twitrssme/
@@ -69,10 +69,10 @@ Here is a basic config
       </Directory>
 
       FastCgiServer /var/www/twitrssme/fcgi/twitter_user_to_rss.pl -processes 5 -idle-timeout 5 -appConnTimeout 3 -priority 18 -listen-queue-depth 20
-      ScriptAlias /twitter_user_to_rss/ /var/www/twitrss.me/fcgi/twitter_user_to_rss.pl
+      ScriptAlias /twitter_user_to_rss/ /var/www/twitrssme/fcgi/twitter_user_to_rss.pl
 
-      FastCgiServer /var/www/twitrss.me/fcgi/twitter_search_to_rss.pl -processes 5 -idle-timeout 5 -appConnTimeout 3 -priority 18 -listen-queue-depth 20
-      ScriptAlias /twitter_search_to_rss/ /var/www/twitrss.me/fcgi/twitter_search_to_rss.pl
+      FastCgiServer /var/www/twitrssme/fcgi/twitter_search_to_rss.pl -processes 5 -idle-timeout 5 -appConnTimeout 3 -priority 18 -listen-queue-depth 20
+      ScriptAlias /twitter_search_to_rss/ /var/www/twitrssme/fcgi/twitter_search_to_rss.pl
 
       <Directory /var/www/twitrssme/fcgi>
             SetHandler fastcgi-script
@@ -95,7 +95,7 @@ The final step is to restart apache.
 
     sudo apachectl graceful
 
-You should now be able to see your instance of TwitRSS.me
+You should now be able to see your instance of TwitRSS.me.
 
 Other information
 -----------------
