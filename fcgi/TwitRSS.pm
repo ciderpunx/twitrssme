@@ -103,10 +103,9 @@ sub items_from_feed {
       $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
-      my $fst_img_a = $tweet->findnodes( './div/div' 
-        . class_contains("AdaptiveMedia")
-        . "/div/div/div")->[0];
-      $fst_img_a = $tweet->findnodes( './div/div' 
+      my $fst_img_a = $tweet->findnodes( './div//div' 
+        . class_contains("js-adaptive-photo"))->[0];
+      $fst_img_a = $tweet->findnodes( './div/div/div' 
         . class_contains("OldMedia")
         . "/div/div/div")->[0] unless $fst_img_a;
       my $fst_img="";
