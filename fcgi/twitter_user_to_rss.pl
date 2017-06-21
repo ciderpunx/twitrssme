@@ -67,11 +67,13 @@ while (my $q = CGI::Fast->new) {
   }
   my $content = $response->content;
 
+
   my @items;
 
   my $tree= HTML::TreeBuilder::XPath->new;
   $tree->parse($content);
   my $tweets = $tree->findnodes( '//li' . class_contains('js-stream-item')); # new version 2015-06-02
+
   if ($tweets) {
     for my $li (@$tweets) {    
       my $tweet = $li->findnodes('./div' 
@@ -79,6 +81,7 @@ while (my $q = CGI::Fast->new) {
                                 )->[0]
       ;
       next unless $tweet;
+      # die $tweet->as_HTML;
       my $header = $tweet->findnodes('./div/div' 
                                      . class_contains("stream-item-header") 
                                      . "/a" 
@@ -96,12 +99,14 @@ while (my $q = CGI::Fast->new) {
       $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
-      my $fst_img_a = $tweet->findnodes( './div/div' 
-                                       . class_contains("AdaptiveMedia")
-                                       . "/div/div/div")->[0];
+      my $fst_img_a = $tweet->findnodes( './div//div' 
+                                       . class_contains("js-adaptive-photo")
+                                       )->[0];
+      ## Need a test case for old media
       $fst_img_a = $tweet->findnodes( './div/div' 
                                     . class_contains("OldMedia")
-                                    . "/div/div/div")->[0] unless $fst_img_a;
+                                    . "/div/div")->[0] unless $fst_img_a;
+
       my $fst_img="";
       if($fst_img_a) {
         $fst_img = $fst_img_a->findvalue('@data-image-url');
