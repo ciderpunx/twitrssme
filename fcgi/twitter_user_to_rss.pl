@@ -93,6 +93,8 @@ while (my $q = CGI::Fast->new) {
       $body=~s{&amp;(\w+);}{&$1;}gi;
       $body=~s{<a}{ <a}gi; # always spaces before a tags
       $body=~s{href="/}{href="https://twitter.com/}gi; # add back in twitter.com to unbreak links to hashtags, users, etc.
+      # Fix pic.twitter.com links.
+      $body =~ s{href="https://t\.co/[A-Za-z0-9]+">(pic\.twitter\.com/[A-Za-z0-9]+)}{href="https://$1">$1</a>}g;
       $body=~s{<a[^>]+href="https://t.co[^"]+"[^>]+title="([^"]+)"[^>]*>}{ <a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
       $body=~s{<a[^>]+title="([^"]+)"[^>]+href="https://t.co[^"]+"[^>]*>}{ <a href="$1">}gi;      # experimental! stop links going via t.co; if an a has a title use it as the href.
       $body=~s{target="_blank"}{}gi;
