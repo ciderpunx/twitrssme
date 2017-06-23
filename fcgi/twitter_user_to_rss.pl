@@ -72,6 +72,12 @@ while (my $q = CGI::Fast->new) {
 
   my $tree= HTML::TreeBuilder::XPath->new;
   $tree->parse($content);
+
+  # Get capitalization from Twitter page
+  my $normalizedName = $tree->findvalue('//a' . class_contains("ProfileHeaderCard-screennameLink") . "/\@href");
+  $normalizedName =~ s{^/}{};
+  $user = $normalizedName;
+
   my $tweets = $tree->findnodes( '//li' . class_contains('js-stream-item')); # new version 2015-06-02
 
   if ($tweets) {
