@@ -30,6 +30,8 @@ Readonly our $TWITTER_BASEURL    => 'https://twitter.com';
 Readonly my  $MAX_AGE            => 3600;
 
 my $browser = LWP::UserAgent->new;
+
+$browser->agent('Mozilla/5.0');
 $browser->conn_cache(LWP::ConnCache->new(5));
 $browser->timeout(2);
 
@@ -54,7 +56,7 @@ sub fetch_search_feed {
   $term =~ s{^#}{};
   $term =~ s{^%23}{};
 
-  my $url = "$TWITTER_BASEURL/search?f=tweets&vertical=default&src=typd&q=$term";
+  my $url = "$TWITTER_BASEURL/search?f=tweets&vertical=default&q=$term&src=typd";
 
 # TODO: Support hashtags
 #  if ($term =~ m{^#}) {
@@ -79,6 +81,8 @@ sub items_from_feed {
   my $tree= HTML::TreeBuilder::XPath->new;
   $tree->parse($content);
   my $tweets = $tree->findnodes( '//li' . class_contains('js-stream-item')); # new version 2015-06-02
+  #say "called";
+  #print Dumper $tweets;
   if ($tweets) {
     for my $li (@$tweets) {    
       my $tweet = $li->findnodes('./div' 
