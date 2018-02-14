@@ -23,6 +23,7 @@ while (my $q = CGI::Fast->new) {
   next if $bad_param;
 
   my $term = $q->param('term') || '#triffidinvasion';
+  my $src = $q->param('src') || 'typd';
 
   $term = lc $term;
   if($term =~ '^@') {
@@ -35,6 +36,6 @@ while (my $q = CGI::Fast->new) {
   my @items       = items_from_feed($content);
   my $feed_url    = "$OWN_BASEURL/?term=$term";
   my $feed_title  = "Twitter search feed for: $term.";
-  my $twitter_url = "$TWITTER_BASEURL/search?f=tweets&amp;src=typd&amp;q=$term";
+  my $twitter_url = "$TWITTER_BASEURL/search?f=tweets&amp;src=$src&amp;q=$term";
   display_feed($feed_url, $feed_title, $twitter_url, @items);
 }
