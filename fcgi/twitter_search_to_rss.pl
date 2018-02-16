@@ -14,7 +14,7 @@ while (my $q = CGI::Fast->new) {
   my @ps = $q->param; 
   my $bad_param=0;
   for(@ps) {
-    unless ($_=~/^(fetch|term)$/) {
+    unless ($_=~/^(fetch|term|src)$/) {
       err("Bad parameters. Naughty.",404); 
       $bad_param++;
       next;
