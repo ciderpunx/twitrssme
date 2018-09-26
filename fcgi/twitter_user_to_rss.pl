@@ -109,6 +109,7 @@ while (my $q = CGI::Fast->new) {
       $body=~s{target="_blank"}{}gi;
       $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
+      $body=~s{<img.*?alt="(.+?)"[^>]*>}{$1}gi;
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
       my @fst_img_a = $tweet->findnodes( './div//div'
                                        . class_contains("js-adaptive-photo")
