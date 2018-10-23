@@ -1,0 +1,9 @@
+version: "2.3"
+
+services:
+  twitrssme:
+    build: .
+    ports:
+      - 3000:80
+    volumes:
+      - .:/var/www/twitrssme
