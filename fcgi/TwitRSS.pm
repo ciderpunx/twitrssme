@@ -44,7 +44,7 @@ sub fetch_user_feed {
 
   my $response = $browser->get($url);
   unless ($response->is_success) {
-    err('Can&#8217;t screenscrape Twitter',404);
+    err('Can&#8217;t screenscrape Twitter: ' . $response->message,$response->code);
     return;
   }
   return $response->content;
@@ -65,7 +65,7 @@ sub fetch_search_feed {
 
   my $response = $browser->get($url);
   unless ($response->is_success) {
-    err('Can&#8217;t screenscrape Twitter',404);
+    err('Can&#8217;t screenscrape Twitter: ' . $response->message,$response->code);
     return;
   }
   return $response->content;
