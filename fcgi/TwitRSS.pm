@@ -33,7 +33,7 @@ my $browser = LWP::UserAgent->new;
 
 $browser->agent('Mozilla/5.0');
 $browser->conn_cache(LWP::ConnCache->new(5));
-$browser->timeout(2);
+$browser->timeout($ENV{TWITRSSME_TIMEOUT_SEC} || 2);
 
 # fetch user feed
 sub fetch_user_feed {

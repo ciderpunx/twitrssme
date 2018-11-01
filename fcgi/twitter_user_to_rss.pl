@@ -25,7 +25,7 @@ Readonly my $OWNBASEURL => 'http://twitrss.me/twitter_user_to_rss';
 my $browser = LWP::UserAgent->new;
 $browser->agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
 $browser->conn_cache(LWP::ConnCache->new(5));
-$browser->timeout(2);
+$browser->timeout($ENV{TWITRSSME_TIMEOUT_SEC} || 2);
 
 while (my $q = CGI::Fast->new) {
         my @ps = $q->param; 
