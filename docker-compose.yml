@@ -3,6 +3,9 @@ version: "2.3"
 services:
   twitrssme:
     build: .
+    init: true
+    environment:
+      TWITRSSME_TIMEOUT_SEC: 10
     ports:
       - 3000:80
     volumes:
