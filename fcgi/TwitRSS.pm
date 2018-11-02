@@ -33,7 +33,7 @@ my $browser = LWP::UserAgent->new;
 
 $browser->agent('Mozilla/5.0');
 $browser->conn_cache(LWP::ConnCache->new(5));
-$browser->timeout(2);
+$browser->timeout($ENV{TWITRSSME_TIMEOUT_SEC} || 2);
 
 # fetch user feed
 sub fetch_user_feed {
@@ -44,7 +44,7 @@ sub fetch_user_feed {
 
   my $response = $browser->get($url);
   unless ($response->is_success) {
-    err('Can&#8217;t screenscrape Twitter',404);
+    err('Can&#8217;t screenscrape Twitter: ' . $response->message,$response->code);
     return;
   }
   return $response->content;
@@ -65,7 +65,7 @@ sub fetch_search_feed {
 
   my $response = $browser->get($url);
   unless ($response->is_success) {
-    err('Can&#8217;t screenscrape Twitter',404);
+    err('Can&#8217;t screenscrape Twitter: ' . $response->message,$response->code);
     return;
   }
   return $response->content;

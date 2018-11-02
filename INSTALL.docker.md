@@ -37,3 +37,10 @@ To start TwitRSS.me in Docker Compose, use:
 Docker Compose will build the image if necessary, and then run the container.
 
 As before, your TwitRSS.me server will be available on http://localhost:3000/ .
+
+# Configuration
+
+The following environment variables are available to configure your TwitRSS.me container:
+
+* `TWITRSSME_TIMEOUT_SEC`
+  * set the internal user agent timeout when fetching from Twitter (default: 10)
