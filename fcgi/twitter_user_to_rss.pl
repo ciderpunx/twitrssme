@@ -128,6 +128,24 @@ while (my $q = CGI::Fast->new) {
           }
         }
       }
+      my $video = $tweet->findnodes('./div//div'
+                                    . class_contains("PlayableMedia-player")
+                                   )->[0];
+      if($video) {
+          $video = $video->findvalues('@style')->[0];
+          $video =~ s{[^']+'([^']+)'\)}{$1};
+          if ($video =~ m{tweet_video} ) {
+            $video =~ s{https://pbs.twimg.com/tweet_video_thumb/([a-zA-Z0-9_]+).jpg}{https://video.twimg.com/tweet_video/$1.mp4};
+            $body =~ s{\]\]>$}{" <video src=\"$video\" width=\"250\" loop>Your browser does not support the video tag.</video>\]\]>"}e; 
+          }
+          elsif ($video =~ m{ext_tw}) {
+              # TODO : cannot deal with these videos, so do nothing
+              # https://pbs.twimg.com/ext_tw_video_thumb/999358024635465728/pu/img/DWtgfemoJZBUHv3n.jpg
+              # https://api.twitter.com/1.1/videos/tweet/config/999358138347335682.json
+              # to get url for video
+          }
+      }
+
       my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
       my $username = $header->findvalue('./span' . class_contains("username"));
       $username =~ s{<[^>]+>}{}g;
