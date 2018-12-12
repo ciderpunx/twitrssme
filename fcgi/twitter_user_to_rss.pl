@@ -109,20 +109,23 @@ while (my $q = CGI::Fast->new) {
       $body=~s{target="_blank"}{}gi;
       $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
+      $body=~s{<img.*?alt="(.+?)"[^>]*>}{$1}gi;
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
-      my $fst_img_a = $tweet->findnodes( './div//div' 
+      my @fst_img_a = $tweet->findnodes( './div//div'
                                        . class_contains("js-adaptive-photo")
-                                       )->[0];
+                                       );
       ## Need a test case for old media
-      $fst_img_a = $tweet->findnodes( './div/div' 
+      @fst_img_a = $tweet->findnodes( './div/div'
                                     . class_contains("OldMedia")
-                                    . "/div/div")->[0] unless $fst_img_a;
+                                    . "/div/div") unless @fst_img_a;
 
       my $fst_img="";
-      if($fst_img_a) {
-        $fst_img = $fst_img_a->findvalue('@data-image-url');
-        if($fst_img) {
-          $body=~s{\]\]>$}{" <img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
+      foreach my $img_a (@fst_img_a) {
+        if($img_a) {
+          $fst_img = $img_a->findvalue('@data-image-url');
+          if($fst_img) {
+            $body=~s{\]\]>$}{" <img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
+          }
         }
       }
       my $video = $tweet->findnodes('./div//div'
@@ -140,6 +143,7 @@ while (my $q = CGI::Fast->new) {
 #          # the url is requested by JS code and need authentication
 #        }
       }
+
       my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
       my $username = $header->findvalue('./span' . class_contains("username"));
       $username =~ s{<[^>]+>}{}g;

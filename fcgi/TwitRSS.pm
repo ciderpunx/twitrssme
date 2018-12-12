@@ -106,17 +106,23 @@ sub items_from_feed {
       $body=~s{</?span[^>]*>}{}gi;
       $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
+      $body=~s{<img.*?alt="(.+?)"[^>]*>}{$1}gi;
       my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
-      my $fst_img_a = $tweet->findnodes( './div//div' 
-        . class_contains("js-adaptive-photo"))->[0];
-      $fst_img_a = $tweet->findnodes( './div/div/div' 
-        . class_contains("OldMedia")
-        . "/div/div/div")->[0] unless $fst_img_a;
+      my @fst_img_a = $tweet->findnodes( './div//div'
+                                       . class_contains("js-adaptive-photo")
+                                       );
+      ## Need a test case for old media
+      @fst_img_a = $tweet->findnodes( './div/div'
+                                    . class_contains("OldMedia")
+                                    . "/div/div") unless @fst_img_a;
+
       my $fst_img="";
-      if($fst_img_a) {
-        $fst_img = $fst_img_a->findvalue('@data-image-url');
-        if($fst_img) {
-          $body=~s{\]\]>$}{"<img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
+      foreach my $img_a (@fst_img_a) {
+        if($img_a) {
+          $fst_img = $img_a->findvalue('@data-image-url');
+          if($fst_img) {
+            $body=~s{\]\]>$}{" <img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
+          }
         }
       }
       my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
