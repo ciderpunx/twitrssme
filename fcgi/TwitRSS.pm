@@ -124,6 +124,9 @@ sub items_from_feed {
       $username =~ s{<[^>]+>}{}g;
       $username =~ s{^\s+}{};
       $username =~ s{\s+$}{};
+      foreach my $img ($bd->findnodes('.//img')) {
+       $img->replace_with($img->attr('alt'));
+      }
       my $title = enctxt($bd->as_text);
       $title=~s{&nbsp;}{}gi;
       $title=~s{http}{ http}; # links in title lose space
