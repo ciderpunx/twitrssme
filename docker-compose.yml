@@ -1,9 +1,19 @@
-version: "2.3"
+version: "2"
 
 services:
   twitrssme:
+    container_name: twitrssme
     build: .
     ports:
       - 3000:80
     volumes:
       - .:/var/www/twitrssme
+    environment:
+      # you may set your own server url, edit environment variables in .env-file, see example.env
+      # if not set, hardcoded standards will be used:
+      - OWN_BASEURL_SEARCH
+      - OWN_BASEURL_USER
+    labels:
+      - "traefik.frontend.rule=Host:${TRAEFIK_HOST}"
+      - "traefik.port=${TRAEFIK_PORT}"
+
