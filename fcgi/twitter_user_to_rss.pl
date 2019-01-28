@@ -21,7 +21,13 @@ binmode STDIN, 'utf8';
 HTML::TreeBuilder::LibXML->replace_original();
 
 Readonly my $BASEURL    => 'https://twitter.com';
-Readonly my $OWNBASEURL => 'http://twitrss.me/twitter_user_to_rss';
+
+my $URL = $ENV{'OWN_BASEURL_USER'};
+if ( not defined $URL ) {
+  $URL = 'http://twitrss.me/twitter_user_to_rss';
+}
+Readonly my $OWNBASEURL => $URL;
+
 my $browser = LWP::UserAgent->new;
 $browser->agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
 $browser->conn_cache(LWP::ConnCache->new(5));

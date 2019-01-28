@@ -5,3 +5,5 @@ LICENSE
 README.md
 #cpanfile
 docker-compose.yml
+example.env
+.env

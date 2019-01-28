@@ -8,7 +8,11 @@ use CGI::Fast;
 use Readonly;
 use TwitRSS;
 
-Readonly my $OWN_BASEURL => 'http://twitrss.me/twitter_search_to_rss';
+my $URL = $ENV{'OWN_BASEURL_SEARCH'};
+if ( not defined $URL ) {
+  $URL = 'http://twitrss.me/twitter_search_to_rss';
+}
+Readonly my $OWN_BASEURL => $URL;
 
 while (my $q = CGI::Fast->new) {
   my @ps = $q->param; 

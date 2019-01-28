@@ -1,3 +1,4 @@
 fcgi/heavy_users
 fcgi/twitter_rss_uses
 include
+.env
