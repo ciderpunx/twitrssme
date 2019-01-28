@@ -8,7 +8,7 @@ It does this by connecting to Twitter on the web and screenscraping the data, ra
 Installation
 ------------
 
-You can install TwitRSS.me by following the instructions in the [INSTALL.md](blob/master/INSTALL.md) file.
+You can install TwitRSS.me by following the instructions in the [INSTALL.md](INSTALL.md) file.
 
 The main reason for doing so is that the caching limits (one query every 45 minutes) is proving restrictive.
 
