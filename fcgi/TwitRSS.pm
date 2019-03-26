@@ -124,9 +124,7 @@ sub items_from_feed {
       $username =~ s{<[^>]+>}{}g;
       $username =~ s{^\s+}{};
       $username =~ s{\s+$}{};
-      my $title = enctxt($bd->as_text);
-      $title=~s{&nbsp;}{}gi;
-      $title=~s{http}{ http}; # links in title lose space
+      my $title = 'Tweet';
       my $uri = $TWITTER_BASEURL . $tweet->findvalue('@data-permalink-path');  
       my $timestamp = $tweet->findnodes('./div/div'
         . class_contains("stream-item-header")
