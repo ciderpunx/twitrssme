@@ -37,10 +37,10 @@ Step 3: Get CPAN modules
 
 Perl is probably installed already, but install it if not.
 
-I use cpanminus to manage Perl dependencies but you may want to use apt, though LWP::Protocol::Net::Curl is not in the Debian repositories. You will also need libcurl3-dev.
+I use cpanminus to manage Perl dependencies but you may want to use apt, though LWP::Protocol::Net::Curl is not in the Debian repositories. You will also need libcurl3-dev. The required Perl dependencies are listed in cpanfile.
 
      sudo aptitude install cpanm libcurl3-dev
-     sudo cpanm CGI::Fast Data::Dumper Encode Net::Curl HTML::Entities HTML::TreeBuilder::LibXML HTML::TreeBuilder::XPath LWP::ConnCache LWP::Protocol::Net::Curl LWP::UserAgent POSIX Readonly
+     sudo cpanm --installdeps .
 
 Once all is installed you should be able to go in to /var/www/twitrssme/fcgi and run the Perl script thus.
 

@@ -1,0 +1,7 @@
+.*
+Dockerfile
+INSTALL.*
+LICENSE
+README.md
+#cpanfile
+docker-compose.yml
