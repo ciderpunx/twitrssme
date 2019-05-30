@@ -4,6 +4,8 @@ use warnings;
 use utf8;
 use 5.10.0;
 use Data::Dumper;
+use DateTime;
+use DateTime::Format::Strptime;
 use Readonly;
 use HTML::TreeBuilder::XPath;
 use HTML::TreeBuilder::LibXML;
@@ -77,31 +79,26 @@ while (my $q = CGI::Fast->new) {
   $tree->parse($content);
 
   my $feedavatar = $tree->findvalue('//table' . class_contains("profile-details") . '/tr/td' . class_contains("avatar") .'/img/@src');
-  exit();
-
-  ## Everything after here is not yet done. TODO
 
   # Get capitalization from Twitter page
-  my $normalizedName = $tree->findvalue('//a' . class_contains("ProfileHeaderCard-screennameLink") . "/\@href");
-  $normalizedName =~ s{^/}{};
-  $user = $normalizedName;
+  my $normalizedName = $tree->findvalue('//div' . class_contains("fullname"));
+  say $normalizedName;
 
-  my $tweets = $tree->findnodes( '//article' . class_contains('js-stream-item')); # new version 2015-06-02
+  my $tweets = $tree->findnodes( '//table' . class_contains('tweet'));
 
   if ($tweets) {
-    for my $li (@$tweets) {    
-      my $tweet = $li->findnodes('./div' 
-                                  . class_contains("js-stream-tweet") 
-                                )->[0]
-      ;
+    for my $tweet (@$tweets) {
       next unless $tweet;
-      # die $tweet->as_HTML;
-      my $header = $tweet->findnodes('./div/div' 
-                                     . class_contains("stream-item-header") 
-                                     . "/a" 
-                                     . class_contains("js-action-profile"))->[0];
-      my $bd   = $tweet->findnodes( './div/div/p' 
-                                     . class_contains("js-tweet-text")
+      my $header = $tweet->findnodes('./tr' 
+                                     . class_contains("tweet-header") 
+                                     )->[0];
+      my $bd   = $tweet->findnodes( './tr' 
+                                     . class_contains("tweet-container")
+                                     . '/td'
+                                     . class_contains("tweet-content")
+                                     . '/div'
+                                     . class_contains("tweet-text")
+                                     . '/div'
                                      )->[0];
       my $body = "<![CDATA[" . encode_entities($bd->as_HTML,'^\n\x20-\x25\x27-\x7e"') . "]]>";
       $body=~s{&amp;(\w+);}{&$1;}gi;
@@ -114,38 +111,68 @@ while (my $q = CGI::Fast->new) {
       $body=~s{target="_blank"}{}gi;
       $body=~s{</?s[^>]*>}{}gi;
       $body=~s{data-[\w\-]+="[^"]+"}{}gi; # validator doesn't like data-aria markup that we get from twitter
-      my $avatar = $header->findvalue('./img' . class_contains("avatar") . "/\@src"); 
-      my $fst_img_a = $tweet->findnodes( './div//div' 
-                                       . class_contains("js-adaptive-photo")
-                                       )->[0];
-      ## Need a test case for old media
-      $fst_img_a = $tweet->findnodes( './div/div' 
-                                    . class_contains("OldMedia")
-                                    . "/div/div")->[0] unless $fst_img_a;
-
-      my $fst_img="";
-      if($fst_img_a) {
-        $fst_img = $fst_img_a->findvalue('@data-image-url');
-        if($fst_img) {
-          $body=~s{\]\]>$}{" <img src=\"$fst_img\" width=\"250\" />\]\]>"}e;
-        }
-      }
-      my $fullname = $header->findvalue('./strong' . class_contains("fullname"));
-      my $username = $header->findvalue('./span' . class_contains("username"));
+      my $avatar = $header->findvalue('./td' . class_contains("avatar") . "/a/img/\@src"); 
+      my $fst_img_a = ""; #$tweet->findnodes( './a' 
+      my $fst_img=""; # TODO: There's no easy way to pull media in a single request to the profile page
+      my $fullname = $header->findvalue('./td' . class_contains('user-info') . '/a/strong' . class_contains("fullname"));
+      my $username = $header->findvalue('./td' . class_contains('user-info') . '/a/div' . class_contains("username"));
       $username =~ s{<[^>]+>}{}g;
       $username =~ s{^\s+}{};
       $username =~ s{\s+$}{};
       my $title = enctxt($bd->as_text);
       $title=~s{&nbsp;}{}gi;
       $title=~s{http}{ http}; # links in title lose space
-      my $uri = $BASEURL . $tweet->findvalue('@data-permalink-path');  
-      my $timestamp = $tweet->findnodes('./div/div'
-                      . class_contains("stream-item-header")
-                      . '/small/a' 
-                      . class_contains("tweet-timestamp"))->[0]->findvalue('./span/@data-time'
-      );  
+      my $uri = $BASEURL . $tweet->findvalue('@data-permalink-path');
+      # Limitation: actual timestamps not present in the feed, we have to work out the best we can from the approximate versions given.
+      my $timestamp = $header->findvalue('./td'
+                      . class_contains("timestamp")
+                      . '/a')
+      ;
+      my $dt = DateTime->from_epoch( epoch => time());
+      if($timestamp =~ m{^\d+h}) {  # XXh == this number of hours ago
+        my $hours_ago = $timestamp;
+        $hours_ago =~ s{[^\d]}{}g;
+        my $now = time();
+        my $then = $now - $hours_ago * 3600;
+        $dt = DateTime->from_epoch( epoch => $then);
+      }
+      elsif($timestamp =~ m{^\d+m}) { # XXm == this num minutes
+        my $mins_ago = $timestamp;
+        $mins_ago =~ s{[^\d]}{}g;
+        my $now = time();
+        my $then = $now - $mins_ago * 60;
+        $dt = DateTime->from_epoch( epoch => $then);
+      }
+      elsif($timestamp =~ m{^\d+ \w{3} \d+$}) {
+        my $strp = DateTime::Format::Strptime->new(
+          pattern => "%d %b %y"
+        );
+        $dt = $strp->parse_datetime($timestamp);
+      }
+      else {
+        #  We hope that this is XX Mon, now we need to work out which year.
+        #  We assume that anything where the month is after the current one must have been last year
+        #  In all other cases it will be the current year.
+        my $curr_year = $dt->year;
+        my $curr_mon  = $dt->month;
 
-      my $pub_date = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($timestamp));
+        my $strp = DateTime::Format::Strptime->new(
+          pattern => "%b %d"
+        );
+        $dt = $strp->parse_datetime($timestamp);
+
+        unless ($dt) {
+          die "dodgy date: '$timestamp'";
+        }
+        if($dt->month <= $curr_mon) { # month <= current, year is this year
+          $dt->set(year => $curr_year);
+        }
+        else { # year is last year
+          $dt->set(year => $curr_year - 1);
+        }
+      }
+      # my $pub_date = strftime("%a, %d %b %Y %H:%M:%S %z", localtime($timestamp));
+      my $pub_date = $dt->strftime("%a, %d %b %Y %H:%M:%S %z");
 
       push @items, {
         username => enctxt($username),
