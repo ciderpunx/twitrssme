@@ -82,7 +82,6 @@ while (my $q = CGI::Fast->new) {
 
   # Get capitalization from Twitter page
   my $normalizedName = $tree->findvalue('//div' . class_contains("fullname"));
-  say $normalizedName;
 
   my $tweets = $tree->findnodes( '//table' . class_contains('tweet'));
 
@@ -122,7 +121,7 @@ while (my $q = CGI::Fast->new) {
       my $title = enctxt($bd->as_text);
       $title=~s{&nbsp;}{}gi;
       $title=~s{http}{ http}; # links in title lose space
-      my $uri = $BASEURL . $tweet->findvalue('@data-permalink-path');
+      my $uri = $BASEURL . $tweet->findvalue('@href');
       # Limitation: actual timestamps not present in the feed, we have to work out the best we can from the approximate versions given.
       my $timestamp = $header->findvalue('./td'
                       . class_contains("timestamp")
