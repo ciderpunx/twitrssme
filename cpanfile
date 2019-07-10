@@ -10,3 +10,5 @@ requires 'LWP::Protocol::Net::Curl';
 requires 'LWP::UserAgent';
 requires 'POSIX';
 requires 'Readonly';
+requires 'DateTime';
+requires 'DateTime::Format::Strptime';
