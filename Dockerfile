@@ -21,7 +21,7 @@ RUN apt-get update \
         zlib1g-dev \
  && a2enmod expires \
  && a2enmod fastcgi \
- && cpanm --installdeps -q . \
+ && cpanm --installdeps -q -f . \
  && DEBIAN_FRONTEND=noninteractive apt-get remove --auto-remove -y \
         build-essential \
  && DEBIAN_FRONTEND=noninteractive apt-get clean -y \
