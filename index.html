@@ -39,8 +39,10 @@
       <div class="container">
         <h1>TwitRSS.me</h1>
         <h2>Get your twitter user feed as RSS</h2>
+	<h3>2019-07-25: Twitter have <a href="https://github.com/ciderpunx/twitrssme/issues/59#issuecomment-430535935">changed their UI</a>. For now, user queries should continue to work, as they'll be directed to the mobile version of Twitter. Search queries not so much. </h3>
+        <h4>2018-10-17: Twitter are <a href="https://github.com/ciderpunx/twitrssme/issues/59#issuecomment-430535935">rate limiting</a> requests from TwitRSS.me, meaning it is effectively broken until I can think of a way round it. You can still run your own instance</h4>
         <p>
-        <form action="/twitter_user_to_rss/" method="get">
+        <form action="/mobile_twitter_to_rss/" method="get">
           <label for="screen_name">Twitter User:</label><br />
           @<input name="user" id="screen_name" type="text" class="input" maxlength="140" size="20" value="" placeholder="ciderpunx" /> <br /> <br />
           <label for="submit" class="hid"> &nbsp; </label>

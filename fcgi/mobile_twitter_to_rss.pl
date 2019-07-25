@@ -82,7 +82,7 @@ while (my $q = CGI::Fast->new) {
 
   # Get capitalization from Twitter page
   my $normalizedName = $tree->findvalue('//div' . class_contains("fullname"));
-  say $normalizedName;
+  # say $normalizedName;
 
   my $tweets = $tree->findnodes( '//table' . class_contains('tweet'));
 
