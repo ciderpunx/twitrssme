@@ -24,6 +24,11 @@ Readonly my $BASEURL    => 'https://twitter.com';
 Readonly my $OWNBASEURL => 'http://twitrss.me/twitter_user_to_rss';
 my $browser = LWP::UserAgent->new;
 $browser->agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
+
+# From http://lwp.interglacial.com/ch11_01.htm#perllwp-CHP-11-SECT-1
+# Enables cookies
+$browser->cookie_jar( {} );
+
 $browser->conn_cache(LWP::ConnCache->new(5));
 $browser->timeout(2);
 
