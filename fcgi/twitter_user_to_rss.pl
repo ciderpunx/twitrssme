@@ -66,6 +66,8 @@ while (my $q = CGI::Fast->new) {
   my $url = "$BASEURL/$user";
   $url .= "/with_replies" if $replies;
 
+  # Clear cookies before every request.
+  $browser->cookie_jar( {} );
   my $response = $browser->get($url);
   unless ($response->is_success) {
     err('Can&#8217;t screenscrape Twitter',404);
