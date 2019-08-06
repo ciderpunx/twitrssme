@@ -29,7 +29,7 @@ if ( not defined $URL ) {
 Readonly my $OWNBASEURL => $URL;
 
 my $browser = LWP::UserAgent->new;
-$browser->agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
+$browser->agent('Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.18');
 
 # From http://lwp.interglacial.com/ch11_01.htm#perllwp-CHP-11-SECT-1
 # Enables cookies
