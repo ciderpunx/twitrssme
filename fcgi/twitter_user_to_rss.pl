@@ -21,9 +21,20 @@ binmode STDIN, 'utf8';
 HTML::TreeBuilder::LibXML->replace_original();
 
 Readonly my $BASEURL    => 'https://twitter.com';
-Readonly my $OWNBASEURL => 'http://twitrss.me/twitter_user_to_rss';
+
+my $URL = $ENV{'OWN_BASEURL_USER'};
+if ( not defined $URL ) {
+  $URL = 'http://twitrss.me/twitter_user_to_rss';
+}
+Readonly my $OWNBASEURL => $URL;
+
 my $browser = LWP::UserAgent->new;
 $browser->agent('Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.18');
+
+# From http://lwp.interglacial.com/ch11_01.htm#perllwp-CHP-11-SECT-1
+# Enables cookies
+$browser->cookie_jar( {} );
+
 $browser->conn_cache(LWP::ConnCache->new(5));
 $browser->timeout(2);
 
@@ -61,6 +72,8 @@ while (my $q = CGI::Fast->new) {
   my $url = "$BASEURL/$user";
   $url .= "/with_replies" if $replies;
 
+  # Clear cookies before every request.
+  $browser->cookie_jar( {} );
   my $response = $browser->get($url);
   unless ($response->is_success) {
     err('Can&#8217;t screenscrape Twitter',404);
