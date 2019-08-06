@@ -8,9 +8,16 @@ It does this by connecting to Twitter on the web and screenscraping the data, ra
 Installation
 ------------
 
-You can install TwitRSS.me by following the instructions in the [INSTALL.md](https://github.com/ciderpunx/twitrssme/blob/master/INSTALL.md) file.
+You can install TwitRSS.me by following the instructions in the [INSTALL.md](INSTALL.md) file.
 
 The main reason for doing so is that the caching limits (one query every 45 minutes) is proving restrictive.
+
+The most easiest way to use TwitRSS.me is just to clone this git-repository, build and run the image in docker:
+
+      git clone <this repo>
+      cp example.env .env
+      vi .env
+      docker-compose up -d --build
 
 History
 -------
