@@ -11,13 +11,13 @@ Hopefully you have  a VPS or something. If not, acquire one. The steps in this t
 Step 1: Install a web server
 ----------------------------
 
-The main TwitRSS runs on Apache with mod_fastcgi. You could use nginx if you wanted. But in this guide we will use Apache.
+The main TwitRSS runs on Apache with mod_fcgid. You could use nginx if you wanted. But in this guide we will use Apache.
 
     sudo aptitude install apache2
 
-Then install the fastcgi module (it is in the non-free repositories, I'm afraid)
+Then install the fcgid module.
 
-  sudo aptitude install libapache2-mod-fastcgi
+    sudo aptitude install libapache2-mod-fcgid
 
 Step 2: Get the TwitRSS code
 ----------------------------
@@ -39,7 +39,7 @@ Perl is probably installed already, but install it if not.
 
 I use cpanminus to manage Perl dependencies but you may want to use apt, though LWP::Protocol::Net::Curl is not in the Debian repositories. You will also need libcurl3-dev. The required Perl dependencies are listed in cpanfile.
 
-     sudo aptitude install cpanm libcurl3-dev
+     sudo aptitude install cpanminus libcurl3-dev
      sudo cpanm --installdeps .
 
 Once all is installed you should be able to go in to /var/www/twitrssme/fcgi and run the Perl script thus.
@@ -68,14 +68,11 @@ Here is a basic config.
          allow from all
       </Directory>
 
-      FastCgiServer /var/www/twitrssme/fcgi/twitter_user_to_rss.pl -processes 5 -idle-timeout 5 -appConnTimeout 3 -priority 18 -listen-queue-depth 20
-      ScriptAlias /twitter_user_to_rss/ /var/www/twitrssme/fcgi/twitter_user_to_rss.pl
+      ScriptAlias /twitter_user_to_rss/ /var/www/twitrssme/fcgi/twitter_user_to_rss.pl.fcgi
 
-      FastCgiServer /var/www/twitrssme/fcgi/twitter_search_to_rss.pl -processes 5 -idle-timeout 5 -appConnTimeout 3 -priority 18 -listen-queue-depth 20
-      ScriptAlias /twitter_search_to_rss/ /var/www/twitrssme/fcgi/twitter_search_to_rss.pl
+      ScriptAlias /twitter_search_to_rss/ /var/www/twitrssme/fcgi/twitter_search_to_rss.pl.fcgi
 
       <Directory /var/www/twitrssme/fcgi>
-            SetHandler fastcgi-script
             ExpiresActive Off
       </Directory>
 
