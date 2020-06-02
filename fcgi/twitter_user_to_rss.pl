@@ -74,7 +74,8 @@ while (my $q = CGI::Fast->new) {
 
   # Clear cookies before every request.
   $browser->cookie_jar( {} );
-  my $response = $browser->get($url);
+  my $response = $browser->get($url,
+    "X-Requested-With" => "XMLHttpRequest");
   unless ($response->is_success) {
     err('Can&#8217;t screenscrape Twitter',404);
     next;
