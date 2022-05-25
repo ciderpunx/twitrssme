@@ -1,9 +1,9 @@
 TwitRSS.me
 ==========
 
-[TwitRSS.me](https://twitrss.me) is a web service that let you generate an [RSS feed](https://en.wikipedia.org/wiki/RSS) from your Twitter user timeline, or from a Twitter search.
+[TwitRSS.me](https://twitrss.me) was a web service that let you generate an [RSS feed](https://en.wikipedia.org/wiki/RSS) from your Twitter user timeline, or from a Twitter search. It doesn't work any more since Twitter changed their filtering setup. The code here works from the commandline if you desparately need RSS feeds. Or use [mastodon](https://joinmastodon.org/) - that has RSS feeds built in.
 
-It does this by connecting to Twitter on the web and screenscraping the data, rather than by using the [Twitter API](https://dev.twitter.com/rest/public).
+It did this by connecting to Twitter on the web and screenscraping the data, rather than by using the [Twitter API](https://dev.twitter.com/rest/public).
 
 Installation
 ------------
